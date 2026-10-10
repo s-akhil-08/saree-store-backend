@@ -1,0 +1,11 @@
+﻿{% load i18n %}
+<h3>{% blocktrans with filter_title=title %} By {{ filter_title }} {% endblocktrans %}</h3>
+<ul style="padding: 0 15px 15px 15px; margin: 0; list-style: none;">
+    <select onchange="window.location.href=this.value" style="width: 100%; padding: 6px 8px; font-size: 13px; color: #111827 !important; background-color: #ffffff !important; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+    {% for choice in choices %}
+        <option value="{{ choice.query_string|iriencode }}" {% if choice.selected %}selected{% endif %} style="color: #111827 !important; background-color: #ffffff !important;">
+            {{ choice.display }}
+        </option>
+    {% endfor %}
+    </select>
+</ul>

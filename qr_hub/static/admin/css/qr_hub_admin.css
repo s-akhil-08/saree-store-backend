@@ -1,0 +1,81 @@
+/* QR Hub Django Admin Styling - Clean Table Spacing & Overflow Fix */
+
+.change-list .results table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.change-list .results th,
+.change-list .results td {
+    padding: 12px 14px !important;
+    vertical-align: middle !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+}
+
+/* Ensure Titles & Slugs don't squish */
+.field-title,
+.field-title_display {
+    min-width: 180px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+
+.field-slug {
+    min-width: 80px !important;
+    font-family: monospace !important;
+    white-space: nowrap !important;
+}
+
+/* Target Type Badge Styling */
+.field-target_type,
+.field-target_type_badge {
+    min-width: 150px !important;
+    white-space: nowrap !important;
+}
+
+.field-target_type select {
+    min-width: 140px !important;
+    width: auto !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    box-sizing: border-box !important;
+}
+
+/* Encode Mode Badge & Select Styling (No text overlap or clipping) */
+.field-encode_mode,
+.field-encode_mode_badge {
+    min-width: 160px !important;
+    white-space: nowrap !important;
+}
+
+.field-encode_mode select {
+    min-width: 180px !important;
+    width: auto !important;
+    padding: 6px 14px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    box-sizing: border-box !important;
+}
+
+/* Target Destination URL */
+.field-encoded_destination {
+    min-width: 220px !important;
+    max-width: 400px !important;
+    word-break: break-all !important;
+}
+
+/* QR Preview Links */
+.field-qr_preview_link {
+    min-width: 200px !important;
+    white-space: nowrap !important;
+}
+
+/* Table Footer Row */
+.change-list p.paginator {
+    padding: 12px 16px !important;
+    font-size: 12px !important;
+    color: #9CA3AF !important;
+}

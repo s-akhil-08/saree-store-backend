@@ -1,0 +1,179 @@
+/* Fix select dropdown menu overflow and cut-off in Django Daisy / Django Admin */
+.inline-group,
+.inline-group table,
+.inline-group fieldset,
+.inline-group td,
+.inline-group th,
+.inline-related,
+div[id*="gallery_items"],
+div[id*="variant_items"],
+.inline-group .tabular,
+.inline-group .module,
+.form-row,
+tbody tr,
+tbody td,
+table.tabular,
+div.tabular {
+    overflow: visible !important;
+}
+
+select[name*="gallery_items"],
+.field-variant select {
+    position: relative !important;
+    z-index: 999 !important;
+    min-width: 160px !important;
+    max-width: 100% !important;
+}
+
+/* ==============================================================
+   THEME-ADAPTIVE BULK ADD TOOLBAR (DaisyUI & Django Admin)
+   Upper-side responsive layout that adapts to all Daisy themes
+   ============================================================== */
+.inline-group .collapse-title,
+.inline-group h2 {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px 12px !important;
+}
+
+.bulk-toolbar-card {
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px 10px !important;
+    padding: 6px 10px !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    z-index: 10 !important;
+}
+
+.bulk-toolbar-card .toolbar-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+}
+
+.bulk-toolbar-card .toolbar-controls {
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px 8px !important;
+}
+
+.bulk-toolbar-card select,
+.bulk-toolbar-card button {
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important;
+}
+
+.bulk-toolbar-card select {
+    font-size: 12px !important;
+    cursor: pointer !important;
+    min-width: 140px !important;
+    max-width: 100% !important;
+}
+
+/* Stepper Group */
+.bulk-stepper-group {
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 32px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.bulk-stepper-group .stepper-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    touch-action: manipulation !important;
+}
+
+.bulk-stepper-group input[type="number"] {
+    width: 36px !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+    box-sizing: border-box !important;
+}
+
+.bulk-stepper-group input[type="number"]::-webkit-inner-spin-button,
+.bulk-stepper-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+.bulk-toolbar-card button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 12px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+}
+
+/* Responsive on Mobile (< 768px) */
+@media (max-width: 768px) {
+    .inline-group .collapse-title,
+    .inline-group h2 {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .bulk-toolbar-card {
+        width: 100% !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 8px !important;
+        margin-top: 6px !important;
+    }
+
+    .bulk-toolbar-card .toolbar-badge {
+        width: 100% !important;
+    }
+
+    .bulk-toolbar-card .toolbar-controls {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+
+    .bulk-toolbar-card select {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .bulk-toolbar-card button {
+        flex: 1 1 auto !important;
+        min-width: 90px !important;
+        height: 36px !important;
+    }
+}

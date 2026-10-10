@@ -1,0 +1,377 @@
+{% extends "admin/base_site.html" %}
+{% load humanize %}
+{% load dash_tags %}
+{% load i18n %}
+
+{% block content_title %}
+    {{ index_title|default:"Admin Dashboard" }}
+{% endblock %}
+
+{% block content %}
+<style>
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    /* Desktop layout (>= 1025px): Asymmetric Bento sizing */
+    .bento-consultations { grid-column: span 7; }
+    .bento-products       { grid-column: span 5; }
+    .bento-users          { grid-column: span 4; }
+    .bento-newarrivals    { grid-column: span 4; }
+    .bento-inquiries      { grid-column: span 4; }
+    .bento-categories     { grid-column: span 3; }
+    .bento-wishlists      { grid-column: span 3; }
+    .bento-system         { grid-column: span 6; }
+
+    /* Tablet layout (641px - 1024px): Multi-size grid, no equal pairs */
+    @media (max-width: 1024px) and (min-width: 641px) {
+        .bento-grid {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .bento-consultations { grid-column: span 6; }
+        .bento-products       { grid-column: span 4; }
+        .bento-categories     { grid-column: span 2; }
+        .bento-users          { grid-column: span 3; }
+        .bento-newarrivals    { grid-column: span 3; }
+        .bento-wishlists      { grid-column: span 2; }
+        .bento-inquiries      { grid-column: span 2; }
+        .bento-system         { grid-column: span 2; }
+    }
+
+    /* Mobile layout (<= 640px): Hero cards + 2-column compact mini-tiles */
+    @media (max-width: 640px) {
+        .bento-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .bento-consultations { grid-column: span 2; }
+        .bento-products       { grid-column: span 2; }
+        .bento-users          { grid-column: span 2; }
+        .bento-newarrivals    { grid-column: span 2; }
+        .bento-categories     { grid-column: span 1; }
+        .bento-wishlists      { grid-column: span 1; }
+        .bento-inquiries      { grid-column: span 1; }
+        .bento-system         { grid-column: span 1; }
+    }
+
+    .bento-tile {
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .bento-tile:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="mt-4 flex flex-col gap-6">
+
+    <!-- TOP TOOLBAR: DASHBOARD TITLE & TOP-RIGHT ACTIVITY LOGS BUTTON -->
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-base-200">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="badge {% if dashboard_stats.is_demo_session %}badge-warning{% else %}badge-primary{% endif %} badge-sm font-bold uppercase tracking-wider">
+                    {% if dashboard_stats.is_demo_session %}Demo Sandbox{% else %}Store Overview{% endif %}
+                </span>
+                <span class="text-xs text-base-content/60 font-medium">Analytics & Insights</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-base-content mt-1 tracking-tight">
+                {% if dashboard_stats.is_demo_session %}
+                    Demo Control Center
+                {% else %}
+                    Store Management Dashboard
+                {% endif %}
+            </h1>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a href="{% url 'admin:admin_logentry_changelist' %}" class="btn btn-outline btn-primary btn-sm gap-2 font-bold shadow-sm hover:scale-[1.02] transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Activity Logs & History →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- DYNAMIC ASYMMETRICAL BENTO GRID FOR ALL SCREEN SIZES -->
+    {% if dashboard_stats %}
+    <div class="bento-grid">
+        
+        <!-- =================================================================== -->
+        <!-- 1. VIDEO CONSULTATIONS (LARGE HERO BANNER)                          -->
+        <!-- =================================================================== -->
+        <div class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-consultations border-l-4 border-l-warning">
+            <div class="card-body p-5 sm:p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="badge badge-warning badge-sm font-bold uppercase tracking-wider">Priority 1</span>
+                                <span class="text-xs font-semibold text-base-content/70">Live Appointments</span>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold mt-2 text-base-content flex items-center gap-3">
+                                <span>Video Consultations</span>
+                                <span class="text-3xl font-extrabold text-warning">{{ dashboard_stats.total_consultations }}</span>
+                            </h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-warning/15 text-warning flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-base-300 opacity-40 my-3" />
+
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        {% if dashboard_stats.pending_consultations > 0 %}
+                            <span class="badge badge-error gap-1 text-white font-bold py-2.5 px-3 text-xs">
+                                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                                {{ dashboard_stats.pending_consultations }} Pending Review
+                            </span>
+                        {% else %}
+                            <span class="badge badge-success gap-1 text-white font-semibold py-2.5 px-3 text-xs">
+                                ✓ All Requests Done
+                            </span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'admin:consultations_consultation_changelist' %}" class="btn btn-warning btn-sm font-bold text-xs">
+                        Manage Appointments →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 2. PRODUCT CATALOG (CORE INVENTORY)                                 -->
+        <!-- =================================================================== -->
+        <div class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-products border-l-4 border-l-primary">
+            <div class="card-body p-5 sm:p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="badge badge-primary badge-sm font-bold uppercase tracking-wider">Priority 2</span>
+                                <span class="text-xs font-semibold text-base-content/70">Core Inventory</span>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold mt-2 text-base-content flex items-center gap-3">
+                                <span>Total Products</span>
+                                <span class="text-3xl font-extrabold text-primary">{{ dashboard_stats.total_products }}</span>
+                            </h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-base-300 opacity-40 my-3" />
+
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <span class="text-xs text-base-content/70">
+                        Across <strong class="text-base-content">{{ dashboard_stats.total_categories }}</strong> product categories
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <a href="{% url 'admin:products_product_add' %}" class="btn btn-outline btn-primary btn-sm text-xs">
+                            + Add Product
+                        </a>
+                        <a href="{% url 'admin:products_product_changelist' %}" class="btn btn-primary btn-sm font-bold text-xs">
+                            View Catalog →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 3. USER ACCOUNTS (CUSTOMER GROWTH & REAL VS DEMO)                   -->
+        <!-- =================================================================== -->
+        <div class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-users border-l-4 border-l-secondary">
+            <div class="card-body p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Customer Growth</span>
+                        <div class="text-2xl font-extrabold mt-1 text-secondary flex items-center gap-3">
+                            <span>{{ dashboard_stats.total_users }}</span>
+                            <span class="text-xs font-normal text-base-content/70">Registered</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <hr class="border-base-300 opacity-40 my-3" />
+
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        {% if dashboard_stats.is_demo_session %}
+                            <span class="badge badge-warning badge-sm font-semibold text-xs">Demo Sandbox</span>
+                        {% else %}
+                            <span class="badge badge-success badge-sm text-white font-bold text-xs">{{ dashboard_stats.real_users }} Real</span>
+                            <span class="badge badge-warning badge-sm font-bold text-xs">{{ dashboard_stats.demo_users }} Demo</span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-ghost btn-xs font-bold hover:text-secondary">
+                        Manage Users →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 4. NEW ARRIVALS SHOWCASE (HOMEPAGE SPOTLIGHT)                        -->
+        <!-- =================================================================== -->
+        <div class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-newarrivals border-l-4 border-l-info">
+            <div class="card-body p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Storefront Spotlight</span>
+                        <div class="text-2xl font-extrabold mt-1 text-info flex items-center gap-3">
+                            <span>{{ dashboard_stats.total_new_arrivals }}</span>
+                            <span class="text-xs font-normal text-base-content/70">Featured Sarees</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-info/15 text-info flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <hr class="border-base-300 opacity-40 my-3" />
+
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs text-base-content/70">Drag & Drop Order</span>
+                    <a href="{% url 'admin:products_newarrivalproduct_changelist' %}" class="btn btn-info btn-xs text-white font-bold">
+                        Reorder ↕
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 5. WHATSAPP LOGS (CUSTOMER DIRECT INQUIRIES)                        -->
+        <!-- =================================================================== -->
+        <div class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-inquiries border-l-4 border-l-success">
+            <div class="card-body p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Inquiries</span>
+                        <div class="text-2xl font-extrabold mt-1 text-success flex items-center gap-3">
+                            <span>{{ dashboard_stats.total_contacts }}</span>
+                            <span class="text-xs font-normal text-base-content/70">WhatsApp Clicks</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-success/15 text-success flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <hr class="border-base-300 opacity-40 my-3" />
+
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs text-base-content/70">Product queries</span>
+                    <a href="{% url 'admin:products_contactlog_changelist' %}" class="btn btn-success btn-xs text-white font-bold">
+                        View Logs →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- 6. CATEGORIES (TAXONOMY & NAVIGATION)                               -->
+        <!-- =================================================================== -->
+        <a href="{% url 'admin:products_category_changelist' %}" class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-categories border-l-4 border-l-accent group">
+            <div class="card-body p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Categories</span>
+                    <div class="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="text-2xl font-extrabold mt-1 text-base-content">{{ dashboard_stats.total_categories }}</div>
+                <div class="text-xs text-base-content/60 group-hover:text-accent font-medium mt-1">Reorder & Manage ↕</div>
+            </div>
+        </a>
+
+        <!-- =================================================================== -->
+        <!-- 7. WISHLISTS (CUSTOMER SAVED FAVORITES)                             -->
+        <!-- =================================================================== -->
+        <a href="{% url 'admin:products_wishlistitem_changelist' %}" class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-wishlists border-l-4 border-l-error group">
+            <div class="card-body p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">Wishlists</span>
+                    <div class="w-8 h-8 rounded-lg bg-error/15 text-error flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="text-2xl font-extrabold mt-1 text-base-content">{{ dashboard_stats.total_wishlists }}</div>
+                <div class="text-xs text-base-content/60 group-hover:text-error font-medium mt-1">Saved Items →</div>
+            </div>
+        </a>
+
+        <!-- =================================================================== -->
+        <!-- 8. SYSTEM STATUS & DATA ISOLATION                                   -->
+        <!-- =================================================================== -->
+        <div class="card bg-base-100 card-bordered shadow-sm hover:shadow-md bento-tile bento-system border-l-4 border-l-neutral">
+            <div class="card-body p-4 sm:p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-base-content/70">System Security</span>
+                        <div class="w-8 h-8 rounded-lg bg-base-300 text-base-content flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="mt-2.5">
+                        <div class="text-xs font-medium text-base-content/60 mb-1">Access Level</div>
+                        <div>
+                            {% if dashboard_stats.is_demo_session %}
+                                <span class="badge badge-warning font-bold text-xs py-2 px-2.5">Demo Sandbox</span>
+                            {% else %}
+                                <span class="badge badge-success font-bold text-white text-xs py-2 px-2.5">Master Admin</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-base-300 opacity-40 my-3" />
+
+                <div class="flex items-center justify-between gap-2 text-xs">
+                    <span class="text-base-content/70 truncate">
+                        {% if dashboard_stats.is_demo_session %}
+                            Isolated test sandbox
+                        {% else %}
+                            Production access
+                        {% endif %}
+                    </span>
+                    <span class="font-semibold text-success flex items-center gap-1 shrink-0">
+                        <span class="w-2 h-2 rounded-full bg-success"></span> Online
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

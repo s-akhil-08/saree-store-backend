@@ -1,0 +1,154 @@
+{% load i18n admin_urls %}
+<style>
+  .submit-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 16px 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-top: 1px solid rgba(128, 128, 128, 0.2) !important;
+    margin-top: 24px !important;
+  }
+  
+  .submit-row input[type="submit"],
+  .submit-row button[type="submit"],
+  .submit-row a.button,
+  .submit-row a.closelink,
+  .submit-row a.deletelink {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 9px 18px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    line-height: 1.3 !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .submit-row button[name="_save"],
+  .submit-row input[name="_save"] {
+    background-color: var(--fallback-p, oklch(var(--p))) !important;
+    color: var(--fallback-pc, oklch(var(--pc))) !important;
+    border: 1px solid transparent !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .submit-row button[name="_save"]:hover,
+  .submit-row input[name="_save"]:hover {
+    filter: brightness(0.9);
+  }
+
+  .submit-row button[name="_saveasnew"],
+  .submit-row button[name="_addanother"],
+  .submit-row button[name="_continue"],
+  .submit-row input[name="_saveasnew"],
+  .submit-row input[name="_addanother"],
+  .submit-row input[name="_continue"],
+  .submit-row a.closelink {
+    background-color: var(--fallback-b2, oklch(var(--b2, 0.3 0 0))) !important;
+    color: var(--fallback-bc, oklch(var(--bc, 0.9 0 0))) !important;
+    border: 1px solid rgba(128, 128, 128, 0.3) !important;
+  }
+
+  .submit-row button[name="_saveasnew"]:hover,
+  .submit-row button[name="_addanother"]:hover,
+  .submit-row button[name="_continue"]:hover,
+  .submit-row a.closelink:hover {
+    background-color: var(--fallback-b3, oklch(var(--b3, 0.25 0 0))) !important;
+  }
+
+  .submit-row a.deletelink {
+    background-color: var(--fallback-er, oklch(var(--er))) !important;
+    color: var(--fallback-erc, oklch(var(--erc))) !important;
+    border: none !important;
+    margin-left: auto !important;
+  }
+
+  .submit-row a.deletelink:hover {
+    filter: brightness(0.9);
+  }
+
+  .submit-row a.button.cancel-btn {
+    background-color: var(--fallback-b2, oklch(var(--b2, 0.3 0 0))) !important;
+    color: var(--fallback-bc, oklch(var(--bc, 0.9 0 0))) !important;
+    border: 1px solid rgba(128, 128, 128, 0.3) !important;
+  }
+
+  .submit-row a.button.cancel-btn:hover {
+    background-color: var(--fallback-b3, oklch(var(--b3, 0.25 0 0))) !important;
+  }
+
+  .submit-row-push-right {
+    margin-left: auto !important;
+  }
+
+  @media (max-width: 640px) {
+    .submit-row {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      width: 100% !important;
+    }
+    .submit-row input[type="submit"],
+    .submit-row button[type="submit"],
+    .submit-row a.button,
+    .submit-row a.closelink,
+    .submit-row a.deletelink {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+    }
+    .submit-row-push-right {
+      margin-left: 0 !important;
+    }
+  }
+</style>
+
+<div class="submit-row">
+{% block submit-row %}
+{% if show_save %}
+    <button type="submit" class="default" name="_save" value="Save">
+      <span>{% translate 'Save' %}</span>
+    </button>
+{% endif %}
+
+{% if show_save_as_new %}
+    <button type="submit" name="_saveasnew" value="Save as new">
+      <span>{% translate 'Save as new' %}</span>
+    </button>
+{% endif %}
+
+{% if show_save_and_add_another %}
+    <button type="submit" name="_addanother" value="Save and add another">
+      <span>{% translate 'Save and add another' %}</span>
+    </button>
+{% endif %}
+
+{% if show_save_and_continue %}
+    <button type="submit" name="_continue" value="Save and continue editing">
+      <span>{% if can_change %}{% translate 'Save and continue editing' %}{% else %}{% translate 'Save and view' %}{% endif %}</span>
+    </button>
+{% endif %}
+
+{% if show_close %}
+    {% url opts|admin_urlname:'changelist' as changelist_url %}
+    <a role="button" href="{% add_preserved_filters changelist_url %}" class="closelink">{% translate 'Close' %}</a>
+{% endif %}
+
+{% if show_delete_link and original %}
+    {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+    <a role="button" href="{% add_preserved_filters delete_url %}" class="deletelink">{% translate "Delete" %}</a>
+{% endif %}
+
+    {% url opts|admin_urlname:'changelist' as changelist_url %}
+    <a role="button" href="{% add_preserved_filters changelist_url %}" class="button cancel-btn {% if not show_delete_link or not original %}submit-row-push-right{% endif %}">{% translate "Cancel" %}</a>
+
+{% endblock %}
+</div>

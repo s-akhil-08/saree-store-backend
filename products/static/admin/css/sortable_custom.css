@@ -1,0 +1,68 @@
+/* Custom Drag & Drop Styling for New Arrivals */
+#result_list tbody tr {
+    cursor: grab !important;
+    transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+#result_list tbody tr:hover {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+}
+
+#result_list tbody tr.dragging-row {
+    opacity: 0.45 !important;
+    background-color: rgba(59, 130, 246, 0.18) !important;
+    border: 2px dashed #3b82f6 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+    cursor: grabbing !important;
+    touch-action: none !important;
+}
+
+/* Dedicated Drag Handle Grip - Mobile Touch Optimized */
+.drag-handle-grip {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    margin-right: 8px !important;
+    background: rgba(148, 163, 184, 0.2) !important;
+    color: #64748b !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    cursor: grab !important;
+    transition: all 0.15s ease !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    touch-action: none !important;
+}
+
+.drag-handle-grip:hover,
+.drag-handle-grip:focus {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+    transform: scale(1.1) !important;
+}
+
+.drag-handle-grip:active {
+    cursor: grabbing !important;
+    background: #2563eb !important;
+    color: #ffffff !important;
+}
+
+/* Order badge */
+.order-number-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 28px !important;
+    height: 26px !important;
+    padding: 0 8px !important;
+    border-radius: 6px !important;
+    background: rgba(148, 163, 184, 0.22) !important;
+    color: currentColor !important;
+    font-weight: 800 !important;
+    font-size: 12px !important;
+}

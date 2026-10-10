@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Profile Update</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f8f5f0; font-family:Georgia, 'Times New Roman', serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f5f0; padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td style="background-color:#1a1a1a; padding:32px 40px; text-align:center;">
+              <h1 style="margin:0; color:#f8f5f0; font-size:22px; font-weight:normal; letter-spacing:3px; text-transform:uppercase;">
+                Silk & Loom
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding:48px 40px; text-align:center;">
+              <div style="width:64px; height:64px; background-color:#e8f4f8; border-radius:50%; margin:0 auto 24px; line-height:64px; font-size:28px;">
+                ✏️
+              </div>
+              <h2 style="margin:0 0 12px; color:#1a1a1a; font-size:24px; font-weight:normal;">
+                Profile Update Verification
+              </h2>
+              <p style="margin:0 0 32px; color:#555; font-size:15px; line-height:1.6;">
+                We received a request to update your account profile details. Use the One-Time Password (OTP) below to confirm this change.
+              </p>
+
+              <!-- OTP Box -->
+              <div style="background-color:#f8f5f0; border:2px dashed #c9b99a; border-radius:8px; padding:24px; margin:0 auto 32px; max-width:280px;">
+                <p style="margin:0; font-size:32px; letter-spacing:8px; color:#1a1a1a; font-weight:bold;">
+                  {{otp}}
+                </p>
+              </div>
+
+              <p style="margin:0 0 8px; color:#888; font-size:13px;">
+                This code is valid for {{otp_expiry_minutes}} minutes. Do not share it with anyone.
+              </p>
+              <p style="margin:0; color:#c62828; font-size:13px;">
+                If you did not initiate this change, please secure your account or contact support immediately.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#f1ece4; padding:24px 40px; text-align:center;">
+              <p style="margin:0; color:#888; font-size:12px;">
+                © Silk & Loom.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

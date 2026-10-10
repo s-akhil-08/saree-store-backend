@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New User Registered</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f8f5f0; font-family:Georgia, 'Times New Roman', serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f5f0; padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+          
+          <tr>
+            <td style="background-color:#1a1a1a; padding:32px 40px; text-align:center;">
+              <h1 style="margin:0; color:#f8f5f0; font-size:22px; font-weight:normal; letter-spacing:3px; text-transform:uppercase;">
+                Silk & Loom — Admin
+              </h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:40px;">
+              <h2 style="margin:0 0 24px; color:#1a1a1a; font-size:22px; font-weight:normal;">
+                New User Registered
+              </h2>
+
+              <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8e0d5; border-radius:8px; overflow:hidden; margin-bottom:32px;">
+                <tr>
+                  <td style="padding:12px 16px; background-color:#f8f5f0; color:#666; font-size:13px; width:140px;">Full Name</td>
+                  <td style="padding:12px 16px; color:#1a1a1a; font-size:14px;">{{user_name}}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 16px; background-color:#f8f5f0; color:#666; font-size:13px;">Email</td>
+                  <td style="padding:12px 16px; color:#1a1a1a; font-size:14px;">{{user_email}}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 16px; background-color:#f8f5f0; color:#666; font-size:13px;">Mobile</td>
+                  <td style="padding:12px 16px; color:#1a1a1a; font-size:14px;">{{user_mobile}}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 16px; background-color:#f8f5f0; color:#666; font-size:13px;">Registered At</td>
+                  <td style="padding:12px 16px; color:#1a1a1a; font-size:14px;">{{registered_at}}</td>
+                </tr>
+              </table>
+
+              <!-- Login Button -->
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                <tr>
+                  <td style="background-color:#1a1a1a; border-radius:6px;">
+                    <a href="{{admin_login_url}}" style="display:inline-block; padding:14px 32px; color:#f8f5f0; text-decoration:none; font-size:14px; letter-spacing:1px; text-transform:uppercase;">
+                      Login to Admin Panel
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:24px 0 0; color:#888; font-size:13px; text-align:center;">
+                This is an automated notification.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background-color:#f1ece4; padding:24px 40px; text-align:center;">
+              <p style="margin:0; color:#888; font-size:12px;">
+                © Silk & Loom
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

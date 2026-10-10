@@ -1,0 +1,62 @@
+# ==========================================
+# Python Virtual Environments
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# Python Cache & Bytecode
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# Django Database, Media & Static Build
+# ==========================================
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# ==========================================
+# Temporary Development & Patch Scripts
+# ==========================================
+fix_*.py
+patch_*.py
+inject_*.py
+make_guide.py
+scratch/
+
+# ==========================================
+# IDEs & System Files
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
