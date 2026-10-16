@@ -4,35 +4,36 @@
 
 {% block extrastyle %}
 <style>
-    body.login {
-        min-height: 100vh;
-    }
-    body.login > .flex,
-    body.login #content {
+    .content-wrapper {
         min-height: 100vh !important;
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
         justify-content: center !important;
-        padding: 0 !important;
-        margin: 0 !important;
     }
-    body.login .main-content {
-        width: 100% !important;
+    .main-content {
+        min-height: 100vh !important;
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         padding: 1rem !important;
     }
-    body.login #content-main {
+    #content-main {
         width: 100% !important;
+        max-width: 420px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
     }
-    body.login .card {
-        width: 24rem !important;
-        max-width: calc(100vw - 2rem) !important;
+    .card {
+        width: 100% !important;
+        max-width: 420px !important;
+        margin: 0 auto !important;
+    }
+    .errornote {
+        width: 100% !important;
+        max-width: 420px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: 1rem !important;
     }
 </style>
 {% endblock %}
@@ -69,7 +70,7 @@
     {% endif %}
 
     <div id="content-main" class="flex justify-center items-center h-full">
-        <div class="card w-96 shadow-lg bg-base-100">
+        <div class="card shadow-lg bg-base-100" style="max-width: 420px; width: 100%; margin: 0 auto;">
             <div class="card-body">
                 <h2 class="text-2xl font-bold text-center mb-6">{% translate "Admin Login" %}</h2>
 

@@ -425,6 +425,22 @@
 
 <script src="{% static "admin/js/vendor/jquery/jquery.min.js" %}"></script>
 <script src="{% static "admin/js/jquery.init.js" %}"></script>
+<script>
+    if (typeof window.django !== 'undefined' && window.django.jQuery) {
+        window.$ = window.jQuery = window.django.jQuery;
+    }
+    document.addEventListener('click', function(e) {
+        var logoutLink = e.target.closest('a[onclick*="logout-form"], a[href*="logout"]');
+        if (logoutLink) {
+            e.preventDefault();
+            e.stopPropagation();
+            var form = document.getElementById('logout-form');
+            if (form) {
+                form.submit();
+            }
+        }
+    }, true);
+</script>
 <script src="{% static "admin/js/theme-change.js" %}"></script>
 <script src="{% static "admin/js/vendor/tom-select.complete.min.js" %}"></script>
 <script defer src="{% static 'admin/js/SelectBox.js' %}"></script>
