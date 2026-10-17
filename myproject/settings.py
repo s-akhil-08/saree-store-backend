@@ -276,3 +276,6 @@ CACHES = {
         "LOCATION": "surya-handlooms-cache",
     }
 }
+
+# Supabase Database Keepalive Token (Loaded strictly from environment, no hardcoded secret)
+SUPABASE_KEEPALIVE_TOKEN = config("SUPABASE_KEEPALIVE_TOKEN", default="")

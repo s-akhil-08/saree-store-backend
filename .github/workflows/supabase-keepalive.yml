@@ -1,0 +1,28 @@
+name: Supabase Database Keepalive
+
+on:
+  schedule:
+    - cron: "30 2,14 * * *"
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Supabase database
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          KEEPALIVE_TOKEN: ${{ secrets.SUPABASE_KEEPALIVE_TOKEN }}
+        run: |
+          set -eu
+
+          if [ -z "$BACKEND_URL" ] || [ -z "$KEEPALIVE_TOKEN" ]; then
+            echo "Required GitHub secrets are missing."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --max-time 60 \
+            -H "X-Keepalive-Token: $KEEPALIVE_TOKEN" \
+            "${BACKEND_URL%/}/api/health/db/"
