@@ -1,0 +1,199 @@
+{% load i18n admin_list dash_tags admin_pagination_tags %}
+
+{% get_admin_pagination_range cl as pagination_range %}
+{% get_admin_start_index cl as start_index %}
+{% get_admin_end_index cl as end_index %}
+{% get_page_size_options as page_size_options %}
+
+<style>
+    .admin-pagination-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        border-top: 1px solid var(--border-color, rgba(128, 128, 128, 0.2));
+        background-color: var(--fallback-b1, var(--b1, #1d232a));
+        border-bottom-left-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
+    }
+    @media (min-width: 768px) {
+        .admin-pagination-nav {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            gap: 16px;
+        }
+    }
+    .admin-pagination-left {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 16px;
+        font-size: 13px;
+        color: var(--fallback-bc, var(--bc, #a6adbb));
+    }
+    @media (max-width: 767px) {
+        .admin-pagination-left {
+            justify-content: space-between;
+            width: 100%;
+        }
+    }
+    .admin-pagination-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+    .admin-pagination-divider {
+        display: inline-block;
+        width: 1px;
+        height: 14px;
+        background-color: currentColor;
+        opacity: 0.25;
+        margin: 0 2px;
+    }
+    @media (max-width: 640px) {
+        .admin-pagination-divider {
+            display: none;
+        }
+    }
+    .admin-pagination-pagesize {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+    .admin-pagination-pagesize select {
+        height: 32px !important;
+        min-height: 32px !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        padding-left: 10px !important;
+        padding-right: 28px !important;
+        font-size: 13px !important;
+        line-height: 32px !important;
+        border-radius: 6px !important;
+    }
+    .admin-pagination-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+        padding: 2px 0;
+    }
+    @media (max-width: 767px) {
+        .admin-pagination-right {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+    .admin-pagination-right .btn {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 0 10px !important;
+        font-size: 12px !important;
+    }
+</style>
+
+<nav class="paginator admin-pagination-nav border-t border-base-200 bg-base-100 select-none" aria-label="{% trans 'Pagination' %}">
+    
+    <!-- Left Section: Record Range Summary & Configurable Page Size Dropdown -->
+    <div class="admin-pagination-left">
+        <!-- Record Range Summary -->
+        <div class="admin-pagination-summary">
+            {% if cl.result_count > 0 %}
+                <span>{% trans "Showing" %}</span>
+                <span class="font-bold text-base-content">{{ start_index }}–{{ end_index }}</span>
+                <span>{% trans "of" %}</span>
+                <span class="font-bold text-base-content">{{ cl.result_count }}</span>
+                <span class="capitalize">{{ cl.opts.verbose_name_plural }}</span>
+            {% else %}
+                <span class="opacity-60">{% trans "No records found" %}</span>
+            {% endif %}
+
+            {% if cl.show_full_result_count and cl.full_result_count and cl.full_result_count != cl.result_count %}
+                <a class="badge badge-sm badge-ghost text-xs ml-1 hover:badge-primary transition-colors"
+                   href="?{% if cl.is_popup %}{{ is_popup_var }}=1{% endif %}"
+                   title="{% trans 'Clear filters and show all' %}">
+                    ({{ cl.full_result_count }} {% trans "total" %})
+                </a>
+            {% endif %}
+        </div>
+
+        <span class="admin-pagination-divider"></span>
+
+        <!-- Configurable Page Size Dropdown -->
+        <div class="admin-pagination-pagesize">
+            <span class="text-xs opacity-70 font-medium shrink-0">{% trans "Show:" %}</span>
+            <select onchange="if(window.startAdminLoading){window.startAdminLoading();} if(window.showActionToast){window.showActionToast('Updating page size...');} window.location.href=this.value;"
+                    class="select select-bordered select-sm font-medium bg-base-100 text-base-content focus:outline-primary cursor-pointer transition-colors shadow-xs">
+                {% for size in page_size_options %}
+                    <option value="{% get_admin_page_size_url cl size %}" {% if cl.paginator.per_page == size %}selected{% endif %}>
+                        {{ size }} {% trans "per page" %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Right Section: Navigation Controls (First, Prev, Smart Numbers, Next, Last) -->
+    <div class="admin-pagination-right">
+        {% if cl.paginator.num_pages > 1 %}
+            <!-- First Page («) -->
+            <a href="{% get_admin_page_url cl 1 %}"
+               class="btn btn-sm btn-ghost border border-base-300 {% if cl.page_num == 1 %}btn-disabled opacity-40 cursor-not-allowed pointer-events-none{% endif %}"
+               title="{% trans 'First Page' %}"
+               aria-label="{% trans 'First Page' %}">
+                <i class="fa-solid fa-angles-left text-xs"></i>
+            </a>
+
+            <!-- Previous Page (‹) -->
+            <a href="{% get_admin_page_url cl cl.page_num|add:'-1' %}"
+               class="btn btn-sm btn-ghost border border-base-300 {% if cl.page_num == 1 %}btn-disabled opacity-40 cursor-not-allowed pointer-events-none{% endif %}"
+               title="{% trans 'Previous Page' %}"
+               aria-label="{% trans 'Previous Page' %}">
+                <i class="fa-solid fa-angle-left text-xs"></i>
+            </a>
+
+            <!-- Smart Scalable Page Numbers -->
+            <div class="join">
+                {% for item in pagination_range %}
+                    {% if item == '...' %}
+                        <button type="button" class="join-item btn btn-sm btn-ghost pointer-events-none opacity-60">...</button>
+                    {% elif item == cl.page_num %}
+                        <button type="button" class="join-item btn btn-sm btn-primary font-bold shadow-xs">{{ item }}</button>
+                    {% else %}
+                        <a href="{% get_admin_page_url cl item %}"
+                           class="join-item btn btn-sm btn-ghost border border-base-300 hover:bg-base-200 transition-colors">
+                            {{ item }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Next Page (›) -->
+            <a href="{% get_admin_page_url cl cl.page_num|add:'1' %}"
+               class="btn btn-sm btn-ghost border border-base-300 {% if cl.page_num == cl.paginator.num_pages %}btn-disabled opacity-40 cursor-not-allowed pointer-events-none{% endif %}"
+               title="{% trans 'Next Page' %}"
+               aria-label="{% trans 'Next Page' %}">
+                <i class="fa-solid fa-angle-right text-xs"></i>
+            </a>
+
+            <!-- Last Page (») -->
+            <a href="{% get_admin_page_url cl cl.paginator.num_pages %}"
+               class="btn btn-sm btn-ghost border border-base-300 {% if cl.page_num == cl.paginator.num_pages %}btn-disabled opacity-40 cursor-not-allowed pointer-events-none{% endif %}"
+               title="{% trans 'Last Page' %}"
+               aria-label="{% trans 'Last Page' %}">
+                <i class="fa-solid fa-angles-right text-xs"></i>
+            </a>
+        {% endif %}
+    </div>
+</nav>

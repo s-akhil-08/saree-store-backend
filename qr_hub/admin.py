@@ -1,3 +1,4 @@
+from myproject.admin_utils import AdminEditButtonMixin
 from django import forms
 from datetime import time
 from django.contrib import admin
@@ -161,9 +162,10 @@ class StoreInfoAdminForm(forms.ModelForm):
 
 
 @admin.register(StoreInfo)
-class StoreInfoAdmin(admin.ModelAdmin):
+class StoreInfoAdmin(AdminEditButtonMixin, admin.ModelAdmin):
     form = StoreInfoAdminForm
-    list_display = ('name', 'badge_text', 'get_hours_display', 'phone_number', 'weekly_off_day', 'is_active', 'updated_at')
+    list_display = ('edit_button', 'name', 'badge_text', 'get_hours_display', 'phone_number', 'weekly_off_day', 'is_active', 'updated_at')
+    list_display_links = ('name',)
     list_editable = ('is_active',)
     search_fields = ('name', 'address', 'phone_number')
     fieldsets = (
@@ -192,12 +194,13 @@ class StoreInfoAdmin(admin.ModelAdmin):
 
 
 @admin.register(SocialChannel)
-class SocialChannelAdmin(SortableAdminMixin, admin.ModelAdmin):
+class SocialChannelAdmin(SortableAdminMixin, AdminEditButtonMixin, admin.ModelAdmin):
     """
     Drag-and-drop sortable social media channel cards.
     Admins can drag rows to reorder them in the list, and changes immediately reflect in the frontend.
     """
-    list_display = ('order', 'name', 'handle', 'icon_name', 'button_label', 'click_count', 'is_active', 'is_verified')
+    list_display = ('order', 'edit_button', 'name', 'handle', 'icon_name', 'button_label', 'click_count', 'is_active', 'is_verified')
+    list_display_links = ('name',)
     list_display_links = ('name',)
     list_editable = ('is_active', 'is_verified', 'button_label')
     list_filter = ('is_active', 'icon_name', 'is_verified', 'is_featured')
@@ -223,8 +226,9 @@ class SocialChannelAdmin(SortableAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(DynamicQRCode)
-class DynamicQRCodeAdmin(admin.ModelAdmin):
-    list_display = ('title_display', 'slug', 'target_type_badge', 'encoded_destination', 'encode_mode_badge', 'scan_count', 'is_active', 'qr_preview_link')
+class DynamicQRCodeAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ('edit_button', 'title_display', 'slug', 'target_type_badge', 'encoded_destination', 'encode_mode_badge', 'scan_count', 'is_active', 'qr_preview_link')
+    list_display_links = ('title_display', 'slug')
     list_editable = ('is_active',)
     list_filter = ('target_type', 'encode_mode', 'is_active', 'include_logo')
     search_fields = ('title', 'slug', 'custom_target_url')
@@ -306,7 +310,9 @@ class DynamicQRCodeAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         # Admin can add only ONE QR code in the system
-        return not DynamicQRCode.objects.exists()
+        if not hasattr(request, "_dynamic_qr_exists"):
+            request._dynamic_qr_exists = DynamicQRCode.objects.exists()
+        return not request._dynamic_qr_exists
 
     def has_delete_permission(self, request, obj=None):
         # Prevent accidental deletion of the single primary QR code
@@ -314,8 +320,10 @@ class DynamicQRCodeAdmin(admin.ModelAdmin):
 
 
 @admin.register(QRScanLog)
-class QRScanLogAdmin(admin.ModelAdmin):
-    list_display = ('qr', 'scanned_at', 'device_type', 'ip_address', 'referrer')
+class QRScanLogAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ('edit_button', 'qr', 'scanned_at', 'device_type', 'ip_address', 'referrer')
+    list_select_related = ('qr',)
+    show_full_result_count = False
     list_filter = ('device_type', 'scanned_at', 'qr')
     readonly_fields = ('qr', 'scanned_at', 'ip_address', 'user_agent', 'device_type', 'referrer')
     search_fields = ('qr__title', 'qr__slug', 'ip_address', 'user_agent')
@@ -325,8 +333,9 @@ class QRScanLogAdmin(admin.ModelAdmin):
 
 
 @admin.register(ButtonClickLog)
-class ButtonClickLogAdmin(admin.ModelAdmin):
-    list_display = ('button_type', 'channel_id', 'clicked_at', 'ip_address')
+class ButtonClickLogAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ('edit_button', 'button_type', 'channel_id', 'clicked_at', 'ip_address')
+    show_full_result_count = False
     list_filter = ('button_type', 'clicked_at')
     readonly_fields = ('button_type', 'channel_id', 'clicked_at', 'ip_address', 'user_agent')
     search_fields = ('button_type', 'channel_id', 'ip_address')
