@@ -1,15 +1,16 @@
 from django.contrib import admin
 from adminsortable2.admin import SortableAdminMixin
 from .models import Category, Product, NewArrivalProduct, WishlistItem, ContactLog, ProductVariantItem, ProductGalleryItem
+from myproject.admin_utils import AdminEditButtonMixin
 
 from django.db import models
 from django.forms import Textarea
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("order", "id", "name", "image", "image_file")
-    list_display_links = ("name",)
+class CategoryAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ("order", "id", "name", "image", "image_file", "edit_button")
+    list_display_links = ("id", "name")
     search_fields = ("id", "name")
     ordering = ("order", "id")
     prepopulated_fields = {"id": ("name",)}      # auto-generate slug from name
@@ -146,9 +147,11 @@ class ProductGalleryItemInline(admin.TabularInline):
 
 
 @admin.register(NewArrivalProduct)
-class NewArrivalProductAdmin(admin.ModelAdmin):
-    list_display = ("new_arrival_order", "id", "name", "category", "created_at")
-    list_display_links = ("name",)
+class NewArrivalProductAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ("new_arrival_order", "id", "name", "category", "created_at", "edit_button")
+    list_display_links = ("id", "name")
+    list_select_related = ("category",)
+    show_full_result_count = False
     ordering = ("new_arrival_order", "-created_at")
 
     class Media:
@@ -165,7 +168,7 @@ class NewArrivalProductAdmin(admin.ModelAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(AdminEditButtonMixin, admin.ModelAdmin):
     list_display = (
         "id",
         "name",
@@ -174,7 +177,11 @@ class ProductAdmin(admin.ModelAdmin):
         "is_new_arrival",
         "new_arrival_order",
         "created_at",
+        "edit_button",
     )
+    list_display_links = ("id", "name")
+    list_select_related = ("category",)
+    show_full_result_count = False
     list_filter = ("category", "is_new_arrival", "brand")
     search_fields = ("id", "name", "brand", "description")
     actions = ["batch_edit_products"]
@@ -326,8 +333,11 @@ class RealVsDemoContactFilter(admin.SimpleListFilter):
 
 
 @admin.register(WishlistItem)
-class WishlistItemAdmin(admin.ModelAdmin):
-    list_display = ("user", "product", "get_account_type", "created_at")
+class WishlistItemAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ("user", "product", "get_account_type", "created_at", "edit_button")
+    list_display_links = ("user", "product")
+    list_select_related = ("user", "product")
+    show_full_result_count = False
     list_filter = (RealVsDemoWishlistFilter, "created_at")
     search_fields = ("user__email", "product__name", "product__id")
     raw_id_fields = ("user", "product")
@@ -346,7 +356,7 @@ class WishlistItemAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContactLog)
-class ContactLogAdmin(admin.ModelAdmin):
+class ContactLogAdmin(AdminEditButtonMixin, admin.ModelAdmin):
     list_display = (
         "id",
         "who",
@@ -354,7 +364,11 @@ class ContactLogAdmin(admin.ModelAdmin):
         "guest_mobile",
         "get_data_source_badge",
         "created_at",
+        "edit_button",
     )
+    list_display_links = ("id", "who")
+    list_select_related = ("user", "product")
+    show_full_result_count = False
     list_filter = (
         RealVsDemoContactFilter,
         ("user", admin.EmptyFieldListFilter),   # separates Authenticated vs Guest
@@ -402,8 +416,9 @@ class GadwalWeavingImageInline(SortableInlineAdminMixin, admin.TabularInline):
 
 
 @admin.register(GadwalWeavingShowcase)
-class GadwalWeavingShowcaseAdmin(SortableAdminBase, admin.ModelAdmin):
-    list_display = ("heading", "button_text", "button_link", "is_active", "updated_at")
+class GadwalWeavingShowcaseAdmin(SortableAdminBase, AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ("heading", "button_text", "button_link", "is_active", "updated_at", "edit_button")
+    list_display_links = ("heading",)
     list_editable = ("is_active",)
     inlines = [GadwalWeavingImageInline]
     fieldsets = (

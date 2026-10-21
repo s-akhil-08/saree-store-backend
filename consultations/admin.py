@@ -1,3 +1,4 @@
+from myproject.admin_utils import AdminEditButtonMixin
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.http import Http404
@@ -47,7 +48,7 @@ class EmailDropdownFilter(admin.SimpleListFilter):
     template = 'admin/dropdown_filter.html'
 
     def lookups(self, request, model_admin):
-        emails = set(model_admin.model.objects.values_list('email', flat=True))
+        emails = model_admin.model.objects.exclude(email__isnull=True).exclude(email__exact="").values_list('email', flat=True).distinct().order_by('email')[:100]
         return [(email, email) for email in emails if email]
 
     def queryset(self, request, queryset):
@@ -57,8 +58,9 @@ class EmailDropdownFilter(admin.SimpleListFilter):
 
 
 @admin.register(Consultation)
-class ConsultationAdmin(admin.ModelAdmin):
+class ConsultationAdmin(AdminEditButtonMixin, admin.ModelAdmin):
     list_display = (
+        "edit_button",
         "id",
         "full_name",
         "email",
@@ -70,6 +72,9 @@ class ConsultationAdmin(admin.ModelAdmin):
         "user_type_display",
         "created_at",
     )
+    list_display_links = ("id", "full_name")
+    list_select_related = ("user",)
+    show_full_result_count = False
     list_filter = (
         RealVsDemoConsultationFilter,
         EmailDropdownFilter,

@@ -1,3 +1,4 @@
+from myproject.admin_utils import AdminEditButtonMixin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -42,7 +43,7 @@ class UserTypeFilter(admin.SimpleListFilter):
 from django.db import models
 
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(AdminEditButtonMixin, BaseUserAdmin):
     inlines = (ProfileInline,)
     list_display = (
         "username",
@@ -54,9 +55,12 @@ class UserAdmin(BaseUserAdmin):
         "is_staff",
         "is_active",
         "date_joined",
+        "edit_button",
     )
+    list_display_links = ("username", "email")
     list_filter = (UserTypeFilter, "is_staff", "is_active", "date_joined")
     list_select_related = ("profile",)
+    show_full_result_count = False
 
     def get_first_name(self, instance):
         return instance.profile.first_name if hasattr(instance, "profile") else (instance.first_name or "-")
@@ -146,7 +150,7 @@ class EmailDropdownFilter(admin.SimpleListFilter):
     template = 'admin/dropdown_filter.html'
 
     def lookups(self, request, model_admin):
-        emails = set(model_admin.model.objects.values_list('email', flat=True))
+        emails = model_admin.model.objects.exclude(email__isnull=True).exclude(email__exact="").values_list('email', flat=True).distinct().order_by('email')[:100]
         return [(email, email) for email in emails if email]
 
     def queryset(self, request, queryset):
@@ -156,8 +160,9 @@ class EmailDropdownFilter(admin.SimpleListFilter):
 
 
 @admin.register(OTP)
-class OTPAdmin(admin.ModelAdmin):
-    list_display = ("email", "code", "purpose", "created_at", "is_used")
+class OTPAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ("email", "code", "purpose", "created_at", "is_used", "edit_button")
+    list_display_links = ("email",)
     list_filter = (EmailDropdownFilter, "purpose", "is_used")
     search_fields = ("email",)
 
@@ -170,8 +175,9 @@ class OTPAdmin(admin.ModelAdmin):
 
 
 @admin.register(TempUser)
-class TempUserAdmin(admin.ModelAdmin):
-    list_display = ("email", "first_name", "last_name", "mobile", "created_at")
+class TempUserAdmin(AdminEditButtonMixin, admin.ModelAdmin):
+    list_display = ("email", "first_name", "last_name", "mobile", "created_at", "edit_button")
+    list_display_links = ("email",)
     search_fields = ("email", "first_name", "last_name", "mobile")
     readonly_fields = ("password", "created_at")
     ordering = ("-created_at",)
@@ -290,4 +296,4 @@ class CustomLogEntryAdmin(admin.ModelAdmin):
 
 if LogEntry in admin.site._registry:
     admin.site.unregister(LogEntry)
-admin.site.register(LogEntry, CustomLogEntryAdmin)
+admin.site.register(LogEntry, CustomLogEntryAdmin)
